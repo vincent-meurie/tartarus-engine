@@ -17,3 +17,9 @@ TEST(RoomTest, CanCreateBasicRoom) {
 TEST(RoomTest, ThrowsOnEmptyId) {
   EXPECT_THROW(Room("", Room::Type::Combat), std::invalid_argument);
 }
+
+TEST(RoomTest, TypeToStringWorks) {
+  EXPECT_STREQ(Room::TypeToString(Room::Type::Combat), "Combat");
+  EXPECT_STREQ(Room::TypeToString(Room::Type::Boss), "Boss");
+  EXPECT_STREQ(Room::TypeToString(Room::Type::Shop), "Shop");
+}

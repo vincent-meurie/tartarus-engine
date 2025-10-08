@@ -35,6 +35,7 @@ class Room {
   // Getters
   const std::string& GetId() const { return id_; }
   Type GetType() const { return type_; }
+  static const char* TypeToString(Type type);
 
  private:
   std::string id_;
