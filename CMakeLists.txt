@@ -41,6 +41,7 @@ include(GoogleTest)
 set(TARTARUS_SOURCES
     # Will add src files here as we create them
     src/core/Room.cpp
+    src/core/Biome.cpp
 )
 
 # Create library (empty for now, will add sources incrementally)

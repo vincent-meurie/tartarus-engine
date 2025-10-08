@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include "core/Biome.h"
 #include "core/Room.h"
 
 /**
@@ -26,7 +27,7 @@ TEST(RoomTest, TypeToStringWorks) {
 
 TEST(RoomExitTest, CanAddSingleExit) {
   Room room("room_01", Room::Type::Combat);
-  room.AddExit({10.0f, 0.0f}, Room::Direction : North);
+  room.AddExit({10.0f, 0.0f}, Room::Direction::North);
 
   EXPECT_EQ(room.GetExitCount(), 1);
   EXPECT_TRUE(room.HasExit(Room::Direction::North));
@@ -62,4 +63,35 @@ TEST(RoomExitTest, CannotExceedMaxExits) {
 
   // Fifth exit should throw
   EXPECT_THROW(room.AddExit({30.0f, 0.0f}, Room::Direction::South), std::runtime_error);
+}
+
+/**
+ * Test Suite: Room Metadata
+ * Testing biome, difficultym and other room properties
+ */
+
+TEST(RoomMetadataTest, CanAssignBiome) {
+  Room room("room_01", Room::Type::Combat);
+  room.SetBiome(Biome::Type::Tartarus);
+
+  EXPECT_EQ(room.GetBiome(), Biome::Type::Tartarus);
+}
+
+TEST(RoomMetadataTest, DefaultBiomeIsTartarus) {
+  Room room("room_01", Room::Type::Combat);
+
+  EXPECT_EQ(room.GetBiome(), Biome::Type::Tartarus);
+}
+
+TEST(RoomMetadataTest, HasDifficultyRating) {
+  Room room("room_01", Room::Type::Combat);
+  room.SetDifficulty(1.5f);
+
+  EXPECT_FLOAT_EQ(room.GetDifficulty(), 1.5f);
+}
+
+TEST(RoomMetadataTest, DefaultDifficultyIsOne) {
+  Room room("room_01", Room::Type::Combat);
+
+  EXPECT_FLOAT_EQ(room.GetDifficulty(), 1.0f);
 }
