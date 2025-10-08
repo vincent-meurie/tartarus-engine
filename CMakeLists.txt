@@ -28,8 +28,9 @@ FetchContent_MakeAvailable(googletest)
 FetchContent_Declare(
     glm
     GIT_REPOSITORY https://github.com/g-truc/glm.git
-    GIT_TAG 0.9.9.8
+    GIT_TAG 1.0.1
 )
+set(GLM_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(glm)
 
 # Enable testing
@@ -39,6 +40,7 @@ include(GoogleTest)
 # Source files (will add as we develop)
 set(TARTARUS_SOURCES
     # Will add src files here as we create them
+    src/core/Room.cpp
 )
 
 # Create library (empty for now, will add sources incrementally)
@@ -51,6 +53,7 @@ target_link_libraries(tartarus_lib PUBLIC glm::glm)
 # Test executable (will add test files as we create them)
 set(TARTARUS_TEST_SOURCES
     # Will add test files as we create them
+    tests/unit/test_room.cpp
 )
 
 add_executable(tartarus_tests ${TARTARUS_TEST_SOURCES})
