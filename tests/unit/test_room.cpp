@@ -23,3 +23,43 @@ TEST(RoomTest, TypeToStringWorks) {
   EXPECT_STREQ(Room::TypeToString(Room::Type::Boss), "Boss");
   EXPECT_STREQ(Room::TypeToString(Room::Type::Shop), "Shop");
 }
+
+TEST(RoomExitTest, CanAddSingleExit) {
+  Room room("room_01", Room::Type::Combat);
+  room.AddExit({10.0f, 0.0f}, Room::Direction : North);
+
+  EXPECT_EQ(room.GetExitCount(), 1);
+  EXPECT_TRUE(room.HasExit(Room::Direction::North));
+}
+
+TEST(RoomExitTest, CanAddMultipleExits) {
+  Room room("room_01", Room::Type::Combat);
+  room.AddExit({10.0f, 0.0f}, Room::Direction::North);
+  room.AddExit({20.0f, 0.0f}, Room::Direction::North);
+
+  EXPECT_EQ(room.GetExitCount(), 2);
+}
+
+TEST(RoomExitTest, ExitPositionsAreStored) {
+  Room room("room_01", Room::Type::Combat);
+  room.AddExit({10.0f, 5.0f}, Room::Direction::North);
+
+  auto exits = room.GetExits();
+  ASSERT_EQ(exits.size(), 1);
+  EXPECT_FLOAT_EQ(exits[0].position.x, 10.0f);
+  EXPECT_FLOAT_EQ(exits[0].position.y, 5.0f);
+  EXPECT_EQ(exits[0].direction, Room::Direction::North);
+}
+
+TEST(RoomExitTest, CannotExceedMaxExits) {
+  Room room("room_01", Room::Type::Combat);
+
+  // Add maximum allowed exits (4)
+  room.AddExit({10.0f, 0.0f}, Room::Direction::North);
+  room.AddExit({15.0f, 0.0f}, Room::Direction::North);
+  room.AddExit({20.0f, 0.0f}, Room::Direction::East);
+  room.AddExit({25.0f, 0.0f}, Room::Direction::West);
+
+  // Fifth exit should throw
+  EXPECT_THROW(room.AddExit({30.0f, 0.0f}, Room::Direction::South), std::runtime_error);
+}
