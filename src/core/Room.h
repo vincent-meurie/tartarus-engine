@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+#include "Biome.h"
+
 /**
  * Represents a single room in the dungeon run
  *
@@ -59,11 +61,22 @@ class Room {
   bool HasExit(Direction direction) const;
   const std::vector<Exit>& GetExits() const { return exits_; }
 
+  // Metadata
+  void SetBiome(Biome::Type biome) { biome_ = biome; }
+  Biome::Type GetBiome() const { return biome_; }
+
+  void SetDifficulty(float difficulty) { difficulty_ = difficulty; }
+  float GetDifficulty() const { return difficulty_; }
+
   // Maximum exits per room (based on 4 cardinal directions)
   static constexpr size_t MAX_EXITS = 4;
 
  private:
   std::string id_;
   Type type_;
+
   std::vector<Exit> exits_;
+
+  Biome::Type biome_ = Biome::Type::Tartarus;
+  float difficulty_ = 1.0f;
 };
