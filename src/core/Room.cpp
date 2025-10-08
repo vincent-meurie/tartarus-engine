@@ -28,3 +28,19 @@ const char* Room::TypeToString(Type type) {
       return "Unknown";
   }
 }
+
+void Room::AddExit(glm::vec2 position, Direction direction) {
+  if (exits_.size() >= MAX_EXITS) {
+    throw std::runtime_error("Cannot exceed maximum exit count of " + std::to_string(MAX_EXITS));
+  }
+  exits_.push_back({position, direction});
+}
+
+bool Room::HasExit(Direction direction) const {
+  for (const auto& exit : exits_) {
+    if (exit.direction == direction) {
+      return true;
+    }
+  }
+  return false;
+}
