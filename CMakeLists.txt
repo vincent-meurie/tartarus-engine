@@ -42,6 +42,7 @@ set(TARTARUS_SOURCES
     # Will add src files here as we create them
     src/core/Room.cpp
     src/core/Biome.cpp
+    src/core/Reward.cpp
 )
 
 # Create library (empty for now, will add sources incrementally)
