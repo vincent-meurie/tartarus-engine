@@ -44,3 +44,7 @@ bool Room::HasExit(Direction direction) const {
   }
   return false;
 }
+
+void Room::AddReward(Reward::Type type) { rewards_.push_back(Reward::Data(type)); }
+
+void Room::AddReward(const Reward::Data& reward) { rewards_.push_back(reward); }

@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "Biome.h"
+#include "Reward.h"
 
 /**
  * Represents a single room in the dungeon run
@@ -68,6 +69,12 @@ class Room {
   void SetDifficulty(float difficulty) { difficulty_ = difficulty; }
   float GetDifficulty() const { return difficulty_; }
 
+  // Reward management
+  void AddReward(Reward::Type type);
+  void AddReward(const Reward::Data& reward);
+  void ClearRewards() { rewards_.clear(); }
+  const std::vector<Reward::Data>& GetRewards() const { return rewards_; }
+
   // Maximum exits per room (based on 4 cardinal directions)
   static constexpr size_t MAX_EXITS = 4;
 
@@ -79,4 +86,6 @@ class Room {
 
   Biome::Type biome_ = Biome::Type::Tartarus;
   float difficulty_ = 1.0f;
+
+  std::vector<Reward::Data> rewards_;
 };
