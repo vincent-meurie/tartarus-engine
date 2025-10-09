@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.15)
 project(TartarusEngine VERSION 0.1.0 LANGUAGES CXX)
 
+# Export compile commands for IntelliSense
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 # C++20 Standard
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -43,6 +46,7 @@ set(TARTARUS_SOURCES
     src/core/Room.cpp
     src/core/Biome.cpp
     src/core/Reward.cpp
+    src/core/RunGraph.cpp
 )
 
 # Create library (empty for now, will add sources incrementally)
