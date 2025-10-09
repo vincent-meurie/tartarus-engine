@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include "core/GraphValidator.h"
 #include "core/RunGraph.h"
 
 /**
@@ -121,4 +122,126 @@ TEST(RunGraphTest, GetAllNodesReturnsAllNodes) {
 
   auto nodes = graph.GetAllNodes();
   EXPECT_EQ(nodes.size(), 3);
+}
+
+/**
+ * Test Suite: Graph Validation
+ * Testing graph validation logic
+ */
+
+TEST(GraphValidatorTest, ValidatesEmptyGraph) {
+  RunGraph graph;
+  GraphValidator validator;
+
+  auto result = validator.Validate(graph);
+
+  EXPECT_FALSE(result.isValid);
+  EXPECT_TRUE(result.HasError(GraphValidator::ValidationError::NoStartNode));
+}
+
+TEST(GraphValidatorTest, ValidatesSimpleValidGraph) {
+  RunGraph graph;
+
+  auto* start = graph.AddRoom("start", Room::Type::Combat);
+  auto* boss = graph.AddRoom("boss", Room::Type::Boss);
+
+  graph.SetStartNode(start);
+  graph.Connect(start, boss);
+
+  GraphValidator validator;
+  auto result = validator.Validate(graph);
+
+  EXPECT_TRUE(result.isValid) << "Simple linear graph should be valid";
+}
+
+TEST(GraphValidatorTest, DetectsMissingBoss) {
+  RunGraph graph;
+
+  auto* start = graph.AddRoom("start", Room::Type::Combat);
+  auto* end = graph.AddRoom("end", Room::Type::Combat);  // Not a boss !
+
+  graph.SetStartNode(start);
+  graph.Connect(start, end);
+
+  GraphValidator validator;
+  auto result = validator.Validate(graph);
+
+  EXPECT_FALSE(result.isValid);
+  EXPECT_TRUE(result.HasError(GraphValidator::ValidationError::NoBossRoom));
+}
+
+TEST(GraphValidatorTest, DetectsCycles) {
+  RunGraph graph;
+
+  auto* node1 = graph.AddRoom("node1", Room::Type::Combat);
+  auto* node2 = graph.AddRoom("node2", Room::Type::Combat);
+  auto* node3 = graph.AddRoom("node3", Room::Type::Combat);
+
+  graph.SetStartNode(node1);
+  graph.Connect(node1, node2);
+  graph.Connect(node2, node3);
+  graph.Connect(node3, node1);  // Creates cycle!
+
+  GraphValidator validator;
+  auto result = validator.Validate(graph);
+
+  EXPECT_FALSE(result.isValid);
+  EXPECT_TRUE(result.HasError(GraphValidator::ValidationError::CycleDetected));
+}
+
+TEST(GraphValidatorTest, DetectsDisconnectedNodes) {
+  RunGraph graph;
+
+  auto* start = graph.AddRoom("start", Room::Type::Combat);
+  auto* isolated = graph.AddRoom("isolated", Room::Type::Combat);
+  auto* boss = graph.AddRoom("boss", Room::Type::Boss);
+
+  graph.SetStartNode(start);
+  graph.Connect(start, boss);
+  // 'isolated' is not connected to anything!
+
+  GraphValidator validator;
+  auto result = validator.Validate(graph);
+
+  EXPECT_FALSE(result.isValid);
+  EXPECT_TRUE(result.HasError(GraphValidator::ValidationError::DisconnectedNode));
+}
+
+TEST(GraphValidatorTest, DetectsDeadEnds) {
+  RunGraph graph;
+
+  auto* start = graph.AddRoom("start", Room::Type::Combat);
+  auto* deadEnd = graph.AddRoom("dead_end", Room::Type::Combat);
+  auto* boss = graph.AddRoom("boss", Room::Type::Boss);
+
+  graph.SetStartNode(start);
+  graph.Connect(start, deadEnd);
+  graph.Connect(start, boss);
+  // deadEnd has no exits and isn't a boss - invalid !
+
+  GraphValidator validator;
+  auto result = validator.Validate(graph);
+
+  EXPECT_FALSE(result.isValid);
+  EXPECT_TRUE(result.HasError(GraphValidator::ValidationError::DeadEnd));
+}
+
+TEST(GraphValidatorTest, AllowsBranchinPaths) {
+  RunGraph graph;
+
+  auto* start = graph.AddRoom("start", Room::Type::Combat);
+  auto* branch1 = graph.AddRoom("branch1", Room::Type::Combat);
+  auto* branch2 = graph.AddRoom("branch2", Room::Type::Treasure);
+  auto* boss = graph.AddRoom("boss", Room::Type::Boss);
+
+  graph.SetStartNode(start);
+  graph.Connect(start, branch1);
+  graph.Connect(start, branch2);
+  graph.Connect(branch1, boss);
+  graph.Connect(branch2, boss);
+
+  GraphValidator validator;
+  auto result = validator.Validate(graph);
+
+  EXPECT_TRUE(result.isValid) << "Branching paths should be valid";
 }
