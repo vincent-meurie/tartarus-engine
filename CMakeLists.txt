@@ -60,6 +60,7 @@ target_link_libraries(tartarus_lib PUBLIC glm::glm)
 set(TARTARUS_TEST_SOURCES
     # Will add test files as we create them
     tests/unit/test_room.cpp
+    tests/unit/test_graph.cpp
 )
 
 add_executable(tartarus_tests ${TARTARUS_TEST_SOURCES})
