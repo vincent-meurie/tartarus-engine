@@ -47,6 +47,7 @@ set(TARTARUS_SOURCES
     src/core/Biome.cpp
     src/core/Reward.cpp
     src/core/RunGraph.cpp
+    src/core/GraphValidator.cpp
 )
 
 # Create library (empty for now, will add sources incrementally)
