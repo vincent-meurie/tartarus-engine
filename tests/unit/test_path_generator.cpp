@@ -20,7 +20,7 @@ TEST(PathGeneratorTest, HasDefaultConfiguration) {
   TestUtils::SeededRandom rng(42);
   PathGenerator generator(rng.GetEngine());
 
-  auto config = genrator.GetConfig();
+  auto config = generator.GetConfig();
 
   // Hades has roughly 40-50 rooms per run
   EXPECT_GE(config.minRooms, 30);
@@ -36,12 +36,12 @@ TEST(PathGeneratorTest, CanSetCustomConfiguration) {
   PathGenerator::Config customConfig;
   customConfig.minRooms = 10;
   customConfig.maxRooms = 15;
-  customConfig.branchProbability = 0.5f
+  customConfig.branchProbability = 0.5f;
 
-                                   generator.SetConfig(customConfig);
+  generator.SetConfig(customConfig);
 
   auto retrievedConfig = generator.GetConfig();
   EXPECT_EQ(retrievedConfig.minRooms, 10);
-  EXPECT_EQ(retrievedConfig.maxrooms, 15);
-  EXPECT_FLOAT_EQ(retrievedConfig.branchProbability, 0.5f)
+  EXPECT_EQ(retrievedConfig.maxRooms, 15);
+  EXPECT_FLOAT_EQ(retrievedConfig.branchProbability, 0.5f);
 }
