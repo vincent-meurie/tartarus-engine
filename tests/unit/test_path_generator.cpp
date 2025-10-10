@@ -142,3 +142,69 @@ TEST(PathGeneratorTest, PathDepthsAreCorrect) {
     expectedDepth++;
   }
 }
+
+/**
+ * Test Suite: Deterministic Generation
+ * Testing that RNG produces reproducible results
+ */
+TEST(PathGeneratorTest, SameSeedProducesSameGraph) {
+  PathGenerator::Config config;
+  config.minRooms = 20;
+  config.maxRooms = 20;
+  config.branchProbability = 0.0f;
+
+  // Generate with seed 42
+  TestUtils::SeededRandom rng1(42);
+  PathGenerator gen1(rng1.GetEngine());
+  gen1.SetConfig(config);
+  auto graph1 = gen1.GeneratePath();
+
+  // generate again with same seed
+  TestUtils::SeededRandom rng2(42);
+  PathGenerator gen2(rng2.GetEngine());
+  gen2.SetConfig(config);
+  auto graph2 = gen2.GeneratePath();
+
+  // Should be identical
+  EXPECT_EQ(graph1.GetNodeCount(), graph2.GetNodeCount());
+
+  auto nodes1 = graph1.GetAllNodes();
+  auto nodes2 = graph2.GetAllNodes();
+
+  for (size_t i = 0; i < nodes1.size(); ++i) {
+    EXPECT_EQ(nodes1[i]->GetRoom()->GetType(), nodes2[i]->GetRoom()->GetType())
+        << "Room types differ at index " << i;
+    EXPECT_EQ(nodes1[i]->GetDepth(), nodes2[i]->GetDepth()) << "Depths differ at index " << i;
+  }
+}
+
+TEST(PathGeneratorTest, DifferentSeedsProduceDifferentGraphs) {
+  PathGenerator::Config config;
+  config.minRooms = 20;
+  config.maxRooms = 20;
+
+  // Generate with seed 42
+  TestUtils::SeededRandom rng1(42);
+  PathGenerator gen1(rng1.GetEngine());
+  gen1.SetConfig(config);
+  auto graph1 = gen1.GeneratePath();
+
+  // Generate with different seed
+  TestUtils::SeededRandom rng2(123);
+  PathGenerator gen2(rng2.GetEngine());
+  gen2.SetConfig(config);
+  auto graph2 = gen2.GeneratePath();
+
+  // Should be different (at least some rooms)
+  auto nodes1 = graph1.GetAllNodes();
+  auto nodes2 = graph2.GetAllNodes();
+
+  int differences = 0;
+  for (size_t i = 0; i < nodes1.size() && i < nodes2.size(); ++i) {
+    if (nodes1[i]->GetRoom()->GetType() != nodes2[i]->GetRoom()->GetType()) {
+      differences++;
+    }
+  }
+
+  EXPECT_GT(differences, 0) << "Different seeds should produce different results";
+}
