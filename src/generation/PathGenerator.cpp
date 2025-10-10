@@ -43,11 +43,31 @@ Room::Type PathGenerator::SelectRoomType(int depth, int totalRooms) {
     return Room::Type::Boss;
   }
 
-  /**
-   * Everything is combat for now
-   * variety will be added later
-   */
-  return Room::Type::Combat;
+  // First room is always combat
+  if (depth == 0) {
+    return Room::Type::Combat;
+  }
+
+  // Place mini-boss at intervals
+  if (config_.miniBossInterval > 0 && depth > 0 && depth % config_.miniBossInterval == 0) {
+    return Room::Type::MiniBoss;
+  }
+
+  // Weighted random selection for variety
+  std::uniform_int_distribution<int> typeDist(0, 100);
+  int roll = typeDist(rng_);
+
+  if (roll < 60) {
+    return Room::Type::Combat;  // 60% combat
+  } else if (roll < 75) {
+    return Room::Type::Elite;  // 15% elite
+  } else if (roll < 85) {
+    return Room::Type::Treasure;  // 10% treasure
+  } else if (roll < 92) {
+    return Room::Type::Shop;  // 7% shop
+  } else {
+    return Room::Type::Fountain;  // 8 % fountain
+  }
 }
 
 std::string PathGenerator::GenerateRoomId(int index) {
