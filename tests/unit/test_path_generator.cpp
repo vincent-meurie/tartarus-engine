@@ -208,3 +208,24 @@ TEST(PathGeneratorTest, DifferentSeedsProduceDifferentGraphs) {
 
   EXPECT_GT(differences, 0) << "Different seeds should produce different results";
 }
+
+TEST(PathGeneratorTest, RespectsRoomCountRange) {
+  TestUtils::SeededRandom rng(42);
+  PathGenerator generator(rng.GetEngine());
+
+  PathGenerator::Config config;
+  config.minRooms = 10;
+  config.maxRooms = 15;
+  config.branchProbability = 0.0f;
+
+  generator.SetConfig(config);
+
+  // Generate multiple paths to test the range
+  for (int i = 0; i < 10; ++i) {
+    auto graph = generator.GeneratePath();
+    size_t roomCount = graph.GetNodeCount();
+
+    EXPECT_GE(roomCount, config.minRooms);
+    EXPECT_LE(roomCount, config.maxRooms);
+  }
+}
