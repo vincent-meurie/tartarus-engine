@@ -48,6 +48,13 @@ class RunGraph {
   RunGraph() = default;
   ~RunGraph() = default;
 
+  RunGraph(const RunGraph&) = delete;
+  RunGraph& operator=(const RunGraph&) = delete;
+
+  // Default move operations ( will move unique ptrs correctly )
+  RunGraph(RunGraph&&) noexcept = default;
+  RunGraph& operator=(const RunGraph&&) = delete;
+
   // Graph construction
   Node* AddRoom(std::string id, Room::Type type);
   Node* AddRoom(std::unique_ptr<Room> room);

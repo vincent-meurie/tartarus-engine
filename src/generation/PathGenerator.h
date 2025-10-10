@@ -1,6 +1,8 @@
 #pragma once
 #include <random>
 
+#include "core/RunGraph.h"
+
 /**
  * Generates critical paths and branhing structures for dungeon runs
  */
@@ -24,8 +26,11 @@ class PathGenerator {
   // Config
   void SetConfig(const Config& config) { config_ = config; }
   const Config& GetConfig() const { return config_; }
+  RunGraph GeneratePath();
 
  private:
   std::mt19937& rng_;
   Config config_;
+  Room::Type SelectRoomType(int depth, int totalRooms);
+  std::string GenerateRoomId(int index);
 };

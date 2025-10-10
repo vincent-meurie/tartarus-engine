@@ -138,7 +138,7 @@ TEST(PathGeneratorTest, PathDepthsAreCorrect) {
 
   while (!current->GetNextRooms().empty()) {
     EXPECT_EQ(current->GetDepth(), expectedDepth);
-    current = current->GetNExtRooms()[0];
+    current = current->GetNextRooms()[0];
     expectedDepth++;
   }
 }
